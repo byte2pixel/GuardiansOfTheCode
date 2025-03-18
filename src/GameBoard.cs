@@ -17,18 +17,17 @@ public class GameBoard(IAnsiConsole console, EnemyFactory enemyFactory)
 
     private void PlayFirstLevel()
     {
-        const int level = 1;
         // spawn 10 zombies
         List<IEnemy> enemies = [];
         for (var i = 0; i < 10; i++)
         {
-            enemies.Add(enemyFactory.SpawnZombie(level));
+            enemies.Add(enemyFactory.Spawn<Zombie>());
         }
 
         // spawn 3 werewolves
         for (var i = 0; i < 3; i++)
         {
-            enemies.Add(enemyFactory.SpawnWerewolf(level));
+            enemies.Add(enemyFactory.Spawn<Werewolf>());
         }
 
         foreach (var enemy in enemies)
@@ -42,6 +41,7 @@ public class GameBoard(IAnsiConsole console, EnemyFactory enemyFactory)
                 if (enemy.Health <= 0)
                 {
                     console.MarkupLineInterpolated($"Enemy has been defeated!");
+                    enemyFactory.Reclaim(enemy);
                     break;
                 }
 

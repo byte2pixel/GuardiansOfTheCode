@@ -3,7 +3,7 @@
 var serviceCollection = new ServiceCollection();
 
 serviceCollection.AddSingleton(AnsiConsole.Console);
-serviceCollection.AddSingleton<EnemyFactory>();
+serviceCollection.AddSingleton<EnemyFactory>(_ => new EnemyFactory(AnsiConsole.Console, 1));
 serviceCollection.AddTransient<GameBoard>();
 var registrar = new DependencyInjectionRegistrar(serviceCollection);
 var app = new CommandApp(registrar);

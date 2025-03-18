@@ -4,6 +4,8 @@ namespace GuardiansOfTheCode.Enemies;
 
 public class Giant(IAnsiConsole console, int health, int level, int armor = 0) : IEnemy
 {
+    private readonly int _originalHealth = health;
+    private readonly int _originalArmor = armor;
     public int Level { get; } = level;
     public int Health { get; set; } = health;
     public int Armor { get; set; } = armor;
@@ -19,5 +21,14 @@ public class Giant(IAnsiConsole console, int health, int level, int armor = 0) :
     public void Defend(PrimaryPlayer player)
     {
         console.MarkupLineInterpolated($"Giant defends against Player {player.Name}!");
+    }
+
+    public void Reset()
+    {
+        Health = _originalHealth;
+        Armor = _originalArmor;
+        OvertimeDamage = 0;
+        Paralyzed = false;
+        ParalyzedFor = 0;
     }
 }

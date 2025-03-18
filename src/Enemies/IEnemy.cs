@@ -12,4 +12,5 @@ public interface IEnemy
    int ParalyzedFor { get; set; }
    void Attack(PrimaryPlayer player);
    void Defend(PrimaryPlayer player);
+   void Reset();
 }
