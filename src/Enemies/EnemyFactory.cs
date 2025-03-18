@@ -18,8 +18,8 @@ public class EnemyFactory(IAnsiConsole console)
 
     public Zombie SpawnZombie(int areaLevel) => areaLevel switch
     {
-        < 3 => new Zombie(console, 50, 2),
-        < 6 => new Zombie(console, 66, 5),
-        _ => new Zombie(console, 100, 10)
+        < 3 => new Zombie(console, 50, 2, 10),
+        < 6 => new Zombie(console, 66, 5, 15),
+        _ => new Zombie(console, 100, 10, 20)
     };
 }
