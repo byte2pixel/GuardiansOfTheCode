@@ -19,21 +19,15 @@ public class GameBoard(IAnsiConsole console, EnemyFactory enemyFactory)
     {
         // spawn 10 zombies
         List<IEnemy> enemies = [];
-        for (var i = 0; i < 10; i++)
-        {
-            enemies.Add(enemyFactory.Spawn<Zombie>());
-        }
+        AddEnemies<Zombie>(enemies, 10);
 
         // spawn 3 werewolves
-        for (var i = 0; i < 3; i++)
-        {
-            enemies.Add(enemyFactory.Spawn<Werewolf>());
-        }
+        AddEnemies<Werewolf>(enemies, 3);
 
         foreach (var enemy in enemies)
         {
             console.MarkupLineInterpolated($"{_player.Name} is fighting a level {enemy.Level} {enemy.GetType().Name}!");
-            while (enemy.Health > 0 && _player.Health > 0)
+            while (BothAlive(enemy))
             {
                 console.MarkupLineInterpolated($"The player attacks the enemy! with {_player.Weapon.Name}");
                 _player.Weapon.Use(enemy);
@@ -45,23 +39,42 @@ public class GameBoard(IAnsiConsole console, EnemyFactory enemyFactory)
                     break;
                 }
 
-                if (enemy.Paralyzed)
-                {
-                    enemy.ParalyzedFor--;
-                    if (enemy.ParalyzedFor == 0)
-                    {
-                        enemy.Paralyzed = false;
-                    }
-                }
-                else
-                {
-                    enemy.Attack(_player);
-                }
+                EnemyAttacks(enemy);
 
                 if (_player.Health > 0) continue;
+
                 console.MarkupLineInterpolated($"Player {_player.Name} has been defeated!");
                 break;
             }
+        }
+    }
+
+    private void EnemyAttacks(IEnemy enemy)
+    {
+        if (enemy.Paralyzed)
+        {
+            enemy.ParalyzedFor--;
+            if (enemy.ParalyzedFor == 0)
+            {
+                enemy.Paralyzed = false;
+            }
+        }
+        else
+        {
+            enemy.Attack(_player);
+        }
+    }
+
+    private bool BothAlive(IEnemy enemy)
+    {
+        return enemy.Health > 0 && _player.Health > 0;
+    }
+
+    private void AddEnemies<T>(List<IEnemy> enemies, int count) where T : IEnemy
+    {
+        for (var i = 0; i < count; i++)
+        {
+            enemies.Add(enemyFactory.Spawn<T>());
         }
     }
 }
