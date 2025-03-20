@@ -17,4 +17,8 @@
     <PackageReference Include="Spectre.Console.Cli.Extensions.DependencyInjection" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+
 </Project>

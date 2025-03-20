@@ -1,16 +1,16 @@
+using Common;
 using GuardiansOfTheCode.Enemies;
 using GuardiansOfTheCode.Player;
 
 namespace GuardiansOfTheCode;
 
-public class GameBoard(IAnsiConsole console, EnemyFactory enemyFactory)
+public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory enemyFactory, IApiService apiService)
 {
-    private readonly PrimaryPlayer _player = PrimaryPlayer.Instance;
-
-    public void PlayArea(int level)
+    public async Task PlayArea(int level)
     {
         if (level == 1)
         {
+            player.Cards = await GetCards();
             PlayFirstLevel();
         }
     }
@@ -26,11 +26,11 @@ public class GameBoard(IAnsiConsole console, EnemyFactory enemyFactory)
 
         foreach (var enemy in enemies)
         {
-            console.MarkupLineInterpolated($"{_player.Name} is fighting a level {enemy.Level} {enemy.GetType().Name}!");
+            console.MarkupLineInterpolated($"{player.Name} is fighting a level {enemy.Level} {enemy.GetType().Name}!");
             while (BothAlive(enemy))
             {
-                console.MarkupLineInterpolated($"The player attacks the enemy! with {_player.Weapon.Name}");
-                _player.Weapon.Use(enemy);
+                console.MarkupLineInterpolated($"The player attacks the enemy! with {player.Weapon.Name}");
+                player.Weapon.Use(enemy);
 
                 if (enemy.Health <= 0)
                 {
@@ -41,9 +41,9 @@ public class GameBoard(IAnsiConsole console, EnemyFactory enemyFactory)
 
                 EnemyAttacks(enemy);
 
-                if (_player.Health > 0) continue;
+                if (player.Health > 0) continue;
 
-                console.MarkupLineInterpolated($"Player {_player.Name} has been defeated!");
+                console.MarkupLineInterpolated($"Player {player.Name} has been defeated!");
                 break;
             }
         }
@@ -61,13 +61,13 @@ public class GameBoard(IAnsiConsole console, EnemyFactory enemyFactory)
         }
         else
         {
-            enemy.Attack(_player);
+            enemy.Attack(player);
         }
     }
 
     private bool BothAlive(IEnemy enemy)
     {
-        return enemy.Health > 0 && _player.Health > 0;
+        return enemy.Health > 0 && player.Health > 0;
     }
 
     private void AddEnemies<T>(List<IEnemy> enemies, int count) where T : IEnemy
@@ -76,5 +76,10 @@ public class GameBoard(IAnsiConsole console, EnemyFactory enemyFactory)
         {
             enemies.Add(enemyFactory.Spawn<T>());
         }
+    }
+
+    private async Task<IEnumerable<Card>> GetCards()
+    {
+        return await apiService.GetCards();
     }
 }

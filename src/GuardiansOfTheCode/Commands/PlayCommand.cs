@@ -1,11 +1,11 @@
 namespace GuardiansOfTheCode.Commands;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class PlayCommand(GameBoard gameBoard) : Command
+public class PlayCommand(GameBoard gameBoard) : AsyncCommand
 {
-    public override int Execute(CommandContext context)
+    public override async Task<int> ExecuteAsync(CommandContext context)
     {
-        gameBoard.PlayArea(1);
+        await gameBoard.PlayArea(1);
         return 0;
     }
 }
