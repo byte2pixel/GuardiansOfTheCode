@@ -1,6 +1,8 @@
 using Common;
+using GuardiansOfTheCode.Adapters;
 using GuardiansOfTheCode.Enemies;
 using GuardiansOfTheCode.Player;
+using SpaceWeapons;
 
 namespace GuardiansOfTheCode;
 
@@ -13,6 +15,23 @@ public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory 
             player.Cards = await GetCards();
             PlayFirstLevel();
         }
+        else if (level == -1)
+        {
+            var choice = console.Prompt(new TextPrompt<bool>("Do you want to play the first level?").DefaultValue(true).AddChoice(true).AddChoice(false));
+            if (choice)
+            {
+                PlaySpecialLevel();
+            }
+        }
+    }
+
+    private void PlaySpecialLevel()
+    {
+        player.Weapon = new WeaponAdapter(new AcmeLaser());
+        console.MarkupLineInterpolated($"Player {player.Name} is using a {player.Weapon.Name}!");
+        var enemy = enemyFactory.Spawn<Zombie>();
+        console.MarkupLineInterpolated($"{player.Name} is fighting a level {enemy.Level} {enemy.GetType().Name}!");
+        player.Weapon.Use(enemy);
     }
 
     private void PlayFirstLevel()

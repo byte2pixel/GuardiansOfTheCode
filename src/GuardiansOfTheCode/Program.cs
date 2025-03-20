@@ -1,4 +1,5 @@
-﻿using GuardiansOfTheCode.Enemies;
+﻿using Common;
+using GuardiansOfTheCode.Enemies;
 using GuardiansOfTheCode.Player;
 
 var serviceCollection = new ServiceCollection();
