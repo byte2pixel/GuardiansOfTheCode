@@ -2,7 +2,7 @@ using Common;
 
 namespace GuardiansOfTheCode;
 
-public interface IApiService
+public interface ICardService
 {
     public Task<IEnumerable<Card>> GetCards();
 }

@@ -1,13 +1,15 @@
 using Common;
+using GuardiansOfTheCode.Facades;
+using GuardiansOfTheCode.Player;
 
 namespace GuardiansOfTheCode.Commands;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class PlayCommand(GameBoard gameBoard) : AsyncCommand
+public class PlayCommand(GameBoardFacade gameBoard) : AsyncCommand
 {
     public override async Task<int> ExecuteAsync(CommandContext context)
     {
-        await gameBoard.PlayArea(-1);
+        await gameBoard.Play(-1);
         TestDecorators();
         return 0;
     }

@@ -3,7 +3,7 @@ using Common;
 
 namespace GuardiansOfTheCode;
 
-public class ApiService(HttpClient httpClient) : IApiService
+public class CardService(HttpClient httpClient) : ICardService
 {
     private const string ApiUrl = "https://localhost:7241";
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };

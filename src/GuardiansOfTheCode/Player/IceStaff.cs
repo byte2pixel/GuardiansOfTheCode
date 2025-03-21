@@ -4,6 +4,10 @@ namespace GuardiansOfTheCode.Player;
 
 public class IceStaff(int damage, int paralyzedFor) : IWeapon
 {
+    public IceStaff() : this(10, 2)
+    {
+    }
+
     public string Name { get; } = "Ice Staff";
     public int Damage { get; } = damage;
     public int ParalyzedFor { get; } = paralyzedFor;

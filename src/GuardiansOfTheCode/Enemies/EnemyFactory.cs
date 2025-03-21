@@ -127,4 +127,42 @@ public class EnemyFactory
 
         return (T)factory();
     }
+
+    public IEnumerable<IEnemy> SpawnMany<T>() where T : IEnemy
+    {
+        if (!_enemyFactories.TryGetValue(typeof(T), out var factory))
+            throw new ArgumentException($"Unsupported enemy type: {typeof(T).Name}");
+
+        var count = typeof(T) switch
+        {
+            var type when type == typeof(Zombie) => AreaLevel switch
+            {
+                < 3 => 10,
+                < 6 => 20,
+                _ => 30
+            },
+            var type when type == typeof(Werewolf) => AreaLevel switch
+            {
+                < 3 => 3,
+                < 6 => 6,
+                _ => 10
+            },
+            var type when type == typeof(Giant) => AreaLevel switch
+            {
+                < 3 => 1,
+                < 6 => 3,
+                _ => 5
+            },
+            _ => throw new ArgumentException($"Unsupported enemy type: {typeof(T).Name}")
+        };
+        return SpawnManyFromPool(factory, count);
+    }
+
+    private static IEnumerable<IEnemy> SpawnManyFromPool<T>(Func<T> factory, int count = 1) where T : IEnemy
+    {
+        for (var i = 0; i < count; i++)
+        {
+            yield return factory();
+        }
+    }
 }

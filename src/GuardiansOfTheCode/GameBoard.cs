@@ -1,18 +1,14 @@
-using Common;
-using GuardiansOfTheCode.Adapters;
 using GuardiansOfTheCode.Enemies;
 using GuardiansOfTheCode.Player;
-using SpaceWeapons;
 
 namespace GuardiansOfTheCode;
 
-public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory enemyFactory, IApiService apiService)
+public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory? enemyFactory, List<IEnemy> enemies)
 {
-    public async Task PlayArea(int level)
+    public void PlayArea(int level)
     {
         if (level == 1)
         {
-            player.Cards = await GetCards();
             PlayFirstLevel();
         }
         else if (level == -1)
@@ -27,22 +23,11 @@ public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory 
 
     private void PlaySpecialLevel()
     {
-        player.Weapon = new WeaponAdapter(new AcmeLaser());
-        console.MarkupLineInterpolated($"Player {player.Name} is using a {player.Weapon.Name}!");
-        var enemy = enemyFactory.Spawn<Zombie>();
-        console.MarkupLineInterpolated($"{player.Name} is fighting a level {enemy.Level} {enemy.GetType().Name}!");
-        player.Weapon.Use(enemy);
+        // Special level code
     }
 
     private void PlayFirstLevel()
     {
-        // spawn 10 zombies
-        List<IEnemy> enemies = [];
-        AddEnemies<Zombie>(enemies, 10);
-
-        // spawn 3 werewolves
-        AddEnemies<Werewolf>(enemies, 3);
-
         foreach (var enemy in enemies)
         {
             console.MarkupLineInterpolated($"{player.Name} is fighting a level {enemy.Level} {enemy.GetType().Name}!");
@@ -54,7 +39,7 @@ public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory 
                 if (enemy.Health <= 0)
                 {
                     console.MarkupLineInterpolated($"Enemy has been defeated!");
-                    enemyFactory.Reclaim(enemy);
+                    enemyFactory?.Reclaim(enemy);
                     break;
                 }
 
@@ -87,18 +72,5 @@ public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory 
     private bool BothAlive(IEnemy enemy)
     {
         return enemy.Health > 0 && player.Health > 0;
-    }
-
-    private void AddEnemies<T>(List<IEnemy> enemies, int count) where T : IEnemy
-    {
-        for (var i = 0; i < count; i++)
-        {
-            enemies.Add(enemyFactory.Spawn<T>());
-        }
-    }
-
-    private async Task<IEnumerable<Card>> GetCards()
-    {
-        return await apiService.GetCards();
     }
 }
