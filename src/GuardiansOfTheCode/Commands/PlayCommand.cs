@@ -1,6 +1,5 @@
 using Common;
 using GuardiansOfTheCode.Facades;
-using GuardiansOfTheCode.Player;
 
 namespace GuardiansOfTheCode.Commands;
 
@@ -11,6 +10,7 @@ public class PlayCommand(GameBoardFacade gameBoard) : AsyncCommand
     {
         await gameBoard.Play(-1);
         TestDecorators();
+        TestCompositePattern();
         return 0;
     }
 
@@ -24,5 +24,26 @@ public class PlayCommand(GameBoardFacade gameBoard) : AsyncCommand
         AnsiConsole.Console.MarkupLineInterpolated(
             $"Name: {soldier.Name}, Attack: {soldier.Attack}, Defense: {soldier.Defense}"
         );
+    }
+
+    private static void TestCompositePattern()
+    {
+        CardDeck deck = new();
+        CardDeck attackDeck = new();
+        CardDeck defenseDeck = new();
+
+        attackDeck.Add(new Card("Sword", 15, 0));
+        attackDeck.Add(new Card("Axe", 20, 0));
+        attackDeck.Add(new Card("Bow", 10, 0));
+
+        defenseDeck.Add(new Card("Shield", 0, 10));
+        defenseDeck.Add(new Card("Helmet", 0, 15));
+        defenseDeck.Add(new Card("Armor", 0, 20));
+
+        deck.Add(attackDeck);
+        deck.Add(new Card("Goblin", 10, 5));
+        deck.Add(new Card("Wizard", 30, 0));
+        deck.Add(defenseDeck);
+        AnsiConsole.Console.WriteLine(deck.Display());
     }
 }
