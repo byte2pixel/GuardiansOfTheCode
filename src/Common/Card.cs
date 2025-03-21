@@ -2,9 +2,9 @@
 
 public class Card : ICardComponent
 {
-    protected string _name;
-    protected int _attack;
-    protected int _defense;
+    protected readonly string _name;
+    protected readonly int _attack;
+    protected readonly int _defense;
 
     public Card(string name, int attack, int defense)
     {
