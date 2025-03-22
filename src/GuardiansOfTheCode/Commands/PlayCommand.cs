@@ -8,7 +8,7 @@ public class PlayCommand(GameBoardFacade gameBoard) : AsyncCommand
 {
     public override async Task<int> ExecuteAsync(CommandContext context)
     {
-        await gameBoard.Play(-1);
+        await gameBoard.Play(1);
         TestDecorators();
         TestCompositePattern();
         return 0;

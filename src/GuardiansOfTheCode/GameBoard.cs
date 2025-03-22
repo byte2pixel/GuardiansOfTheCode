@@ -28,27 +28,42 @@ public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory?
 
     private void PlayFirstLevel()
     {
-        foreach (var enemy in enemies)
-        {
-            console.MarkupLineInterpolated($"{player.Name} is fighting a level {enemy.Level} {enemy.GetType().Name}!");
-            while (BothAlive(enemy))
-            {
-                console.MarkupLineInterpolated($"The player attacks the enemy! with {player.Weapon.Name}");
-                player.Weapon.Use(enemy);
+        IEnemy? currentEnemy = null;
 
-                if (enemy.Health <= 0)
+        while(true)
+        {
+            if (currentEnemy != null) continue;
+            if (enemies.Count > 0)
+            {
+                currentEnemy = enemies[0];
+                enemies.Remove(currentEnemy);
+            }
+            else
+            {
+                console.MarkupLineInterpolated($"[green]Player {player.Name} has defeated all enemies![/]");
+                break;
+            }
+
+            console.MarkupLineInterpolated($"{player.Name} is fighting a level {currentEnemy.Level} {currentEnemy.Name}!");
+            while (BothAlive(currentEnemy))
+            {
+                console.MarkupLineInterpolated($"The player attacks {currentEnemy.Name} with the {player.Weapon.Name}");
+                player.Weapon.Use(console, currentEnemy);
+
+                if (currentEnemy.Health <= 0)
                 {
-                    console.MarkupLineInterpolated($"Enemy has been defeated!");
-                    enemyFactory?.Reclaim(enemy);
+                    console.MarkupLineInterpolated($"{currentEnemy.Name} has been defeated!");
+                    enemyFactory?.Reclaim(currentEnemy);
+                    currentEnemy = null;
                     break;
                 }
 
-                EnemyAttacks(enemy);
+                EnemyAttacks(currentEnemy);
 
                 if (player.Health > 0) continue;
 
                 console.MarkupLineInterpolated($"Player {player.Name} has been defeated!");
-                break;
+                return;
             }
         }
     }
@@ -65,7 +80,10 @@ public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory?
         }
         else
         {
-            enemy.Attack(player);
+            var damage = enemy.Attack(player);
+            console.MarkupLineInterpolated($"{enemy.Name} attacks the player for {damage} damage!");
+            player.Health -= damage;
+            player.DamageIndicator.NotifyAboutDamage(player.Health, damage);
         }
     }
 

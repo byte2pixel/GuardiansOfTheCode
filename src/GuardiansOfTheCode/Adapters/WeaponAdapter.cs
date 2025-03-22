@@ -15,8 +15,10 @@ public class WeaponAdapter : IWeapon
 
     public string Name => _spaceWeapon.SpaceWeaponName;
     public int Damage => _spaceWeapon.ImpactDamage + _spaceWeapon.LaserDamage;
-    public void Use(IEnemy enemy)
+    public void Use(IAnsiConsole console, IEnemy enemy)
     {
-        enemy.Health -= _spaceWeapon.Shoot();
+        var damage = _spaceWeapon.Shoot();
+        enemy.Health -= damage;
+        enemy.DamageIndicator.NotifyAboutDamage(enemy.Health, damage);
     }
 }

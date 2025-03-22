@@ -12,10 +12,14 @@ public class IceStaff(int damage, int paralyzedFor) : IWeapon
     public int Damage { get; } = damage;
     public int ParalyzedFor { get; } = paralyzedFor;
 
-    public void Use(IEnemy enemy)
+    public void Use(IAnsiConsole console, IEnemy enemy)
     {
-        enemy.Health -= Damage;
+        var computedDamage = Math.Min(enemy.Health, Damage);
+        enemy.Health -= computedDamage;
+        enemy.DamageIndicator.NotifyAboutDamage(enemy.Health, computedDamage);
+        if (enemy.Health <= 0 || enemy.Paralyzed || new Random().Next(1, 4) != 1) return;
+        console.MarkupLineInterpolated($"The {enemy.Name} is paralyzed and can't move for {ParalyzedFor} turns.");
         enemy.Paralyzed = true;
-        enemy.ParalyzedFor = ParalyzedFor;
+        enemy.ParalyzedFor = 2;
     }
 }
