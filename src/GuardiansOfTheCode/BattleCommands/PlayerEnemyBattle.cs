@@ -27,7 +27,7 @@ public class PlayerEnemyBattle(IAnsiConsole console, PrimaryPlayer player, IEnem
         }
         else
         {
-            var damage = enemy.Attack(player);
+            var damage = Math.Min(enemy.Attack(player), player.Health);
             console.MarkupLineInterpolated(
                 $"[red]{enemy.Name}[/] attacks [red]{player.Name}[/] for [red]{damage}[/] damage!"
             );

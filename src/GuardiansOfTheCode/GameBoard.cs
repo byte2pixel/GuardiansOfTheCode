@@ -73,6 +73,8 @@ public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory?
             new PlayerEnemyBattle(console, player, enemy)
         ];
         commands.AddRange(player.Cards.Select(card => new CardEnemyBattleCommand(console, card, enemy)));
+        // randomize the order
+        commands = commands.OrderBy(_ => Guid.NewGuid()).ToList();
         return commands;
     }
 }

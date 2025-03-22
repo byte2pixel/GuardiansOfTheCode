@@ -1,3 +1,4 @@
+using GuardiansOfTheCode.Battlefields;
 using GuardiansOfTheCode.Enemies;
 using GuardiansOfTheCode.Player;
 
@@ -15,6 +16,7 @@ public class GameBoardFacade(
     public async Task Play(int areaLevel)
     {
         ConfigurePlayerWeapon();
+        ConfigureTheBattlefield();
         await AddPlayerCards();
         InitializeEnemyFactory(areaLevel);
         LoadZombies();
@@ -22,6 +24,46 @@ public class GameBoardFacade(
         LoadGiants();
         var gameBoard = new GameBoard(console, player, _enemyFactory, _enemies);
         gameBoard.PlayArea(areaLevel);
+    }
+
+    private void ConfigureTheBattlefield()
+    {
+
+        // Find all non-abstract classes that implement BattlefieldTemplate
+        var battlefield = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(a => a.GetTypes())
+            .Where(t => typeof(BattlefieldTemplate).IsAssignableFrom(t) && t is { IsAbstract: false })
+            .ToList();
+        var availableFields = new List<BattlefieldTemplate>();
+        foreach (var type in battlefield)
+        {
+            try
+            {
+                if (Activator.CreateInstance(type) is BattlefieldTemplate field)
+                {
+                    availableFields.Add(field);
+                }
+            }
+            catch (Exception)
+            {
+                // Ignore any BattlefieldTemplate that cannot be instantiated
+            }
+        }
+        if (availableFields.Count == 0)
+        {
+            console.MarkupLine("[red]No battlefields available![/]");
+            return;
+        }
+
+        var selectedField = console.Prompt(
+            new SelectionPrompt<BattlefieldTemplate>()
+                .Title("Choose your battlefield!")
+                .PageSize(5)
+                .AddChoices(availableFields)
+                .UseConverter(f => f.Name)
+        );
+        console.MarkupLine(selectedField.Describe);
+        console.WriteLine();
     }
 
     private void ConfigurePlayerWeapon()
