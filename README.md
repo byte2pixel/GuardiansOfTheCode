@@ -1,6 +1,6 @@
-# Guardians of the Code
+# [Guardians of the Code](https://github.com/byte2pixel/GuardiansOfTheCode)
 
-This is the code from the On-Demand Course `Design Patterns Using C#` by `Dmitri Loukas` on O'Reilly.
+This is the code from the On-Demand Course [Design Patterns Using C# and .NET Core](https://learning.oreilly.com/course/design-patterns-using/9781788625258/) by Dmitri Loukas on O'Reilly.
 
 I did not follow the online course exactly. Most of the course is outdated and not following modern .NET practices and some of the examples are poor examples of design patterns.
 
