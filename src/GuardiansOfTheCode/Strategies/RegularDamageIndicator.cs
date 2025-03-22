@@ -4,6 +4,7 @@ public class RegularDamageIndicator(IAnsiConsole console, string name) : IDamage
 {
     public void NotifyAboutDamage(int health, int damage)
     {
+        if (health < 30) return;
         console.MarkupLineInterpolated($"{name} has [blue]{health}[/] health left after taking [red]{damage}[/] damage!");
     }
 }

@@ -21,7 +21,6 @@ public class Zombie(IAnsiConsole console, int health, int level, int armor = 0) 
 
     public int Attack(PrimaryPlayer player)
     {
-        console.MarkupLineInterpolated($"Zombie attacks Player {player.Name}!");
         return 10;
     }
 

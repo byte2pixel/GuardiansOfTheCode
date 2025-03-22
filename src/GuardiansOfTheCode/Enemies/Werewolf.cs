@@ -21,7 +21,6 @@ public class Werewolf(IAnsiConsole console, int health, int level, int armor = 0
 
     public int Attack(PrimaryPlayer player)
     {
-        console.MarkupLineInterpolated($"Werewolf attacks Player {player.Name}!");
         return 20;
     }
 

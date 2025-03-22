@@ -20,7 +20,6 @@ public class Giant(IAnsiConsole console, int health, int level, int armor = 0) :
 
     public int Attack(PrimaryPlayer player)
     {
-        console.MarkupLineInterpolated($"Giant attacks Player {player.Name}!");
         return 30;
     }
 

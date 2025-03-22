@@ -1,3 +1,4 @@
+using GuardiansOfTheCode.BattleCommands;
 using GuardiansOfTheCode.Enemies;
 using GuardiansOfTheCode.Player;
 
@@ -40,16 +41,16 @@ public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory?
             }
             else
             {
-                console.MarkupLineInterpolated($"[green]Player {player.Name} has defeated all enemies![/]");
+                console.MarkupLineInterpolated($"[green]{player.Name} has defeated all enemies![/]");
                 break;
             }
 
-            console.MarkupLineInterpolated($"{player.Name} is fighting a level {currentEnemy.Level} {currentEnemy.Name}!");
-            while (BothAlive(currentEnemy))
+            console.MarkupLineInterpolated($"[green]{player.Name}[/] is fighting a level [red]{currentEnemy.Level} {currentEnemy.Name}[/]!");
+            console.MarkupLineInterpolated($"The [red]{currentEnemy.Name}[/] has [red]{currentEnemy.Health}[/] health!");
+            var commands = GetBattleCommands(currentEnemy);
+            foreach (var command in commands)
             {
-                console.MarkupLineInterpolated($"The player attacks {currentEnemy.Name} with the {player.Weapon.Name}");
-                player.Weapon.Use(console, currentEnemy);
-
+                command.Execute();
                 if (currentEnemy.Health <= 0)
                 {
                     console.MarkupLineInterpolated($"{currentEnemy.Name} has been defeated!");
@@ -58,37 +59,20 @@ public class GameBoard(IAnsiConsole console, PrimaryPlayer player, EnemyFactory?
                     break;
                 }
 
-                EnemyAttacks(currentEnemy);
-
                 if (player.Health > 0) continue;
-
-                console.MarkupLineInterpolated($"Player {player.Name} has been defeated!");
+                console.MarkupLineInterpolated($"[bold][red]{player.Name} has been defeated![/][/]");
                 return;
             }
         }
     }
 
-    private void EnemyAttacks(IEnemy enemy)
+    private List<IBattleCommand> GetBattleCommands(IEnemy enemy)
     {
-        if (enemy.Paralyzed)
-        {
-            enemy.ParalyzedFor--;
-            if (enemy.ParalyzedFor == 0)
-            {
-                enemy.Paralyzed = false;
-            }
-        }
-        else
-        {
-            var damage = enemy.Attack(player);
-            console.MarkupLineInterpolated($"{enemy.Name} attacks the player for {damage} damage!");
-            player.Health -= damage;
-            player.DamageIndicator.NotifyAboutDamage(player.Health, damage);
-        }
-    }
-
-    private bool BothAlive(IEnemy enemy)
-    {
-        return enemy.Health > 0 && player.Health > 0;
+        List<IBattleCommand> commands =
+        [
+            new PlayerEnemyBattle(console, player, enemy)
+        ];
+        commands.AddRange(player.Cards.Select(card => new CardEnemyBattleCommand(console, card, enemy)));
+        return commands;
     }
 }
